@@ -1,5 +1,7 @@
 import {Express, Request, Response} from 'express';
 import { createUserController } from './controller/userController';
+import validateRequest from './middleware/validateRequest';
+import { createUserSchema } from './schema/user.schema';
 
 export default function (app: Express) {
     app.get('/healtcheck', (req: Request, res: Response) => {
@@ -10,7 +12,7 @@ export default function (app: Express) {
   // Register user
   // POST /api/user
 
-  app.post("/api/users", validateRequest(createSchema), createUserController);
+  app.post("/api/users", validateRequest(createUserSchema), createUserController);
 
   // Login user
   // POST /api/session
