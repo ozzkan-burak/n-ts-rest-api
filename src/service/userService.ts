@@ -13,6 +13,20 @@ export async function createUser(input: DocumentDefinition<IUserDocument>) {
   }
 }
 
-function findUser(email: string) {
-  return User.findOne({email: email});
+function findUser() {}
+
+export async function validatePassword({
+  email,
+  password
+} :{
+  email: IUserDocument['email'];
+  password: string;
+}) {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return false;
+  }
+
+  return omit(user.toJSON(), " password");
 }

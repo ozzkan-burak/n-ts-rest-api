@@ -1,30 +1,34 @@
-import { DocumentDefinition } from "mongoose";
-import User from "../model/userModel";
+import config from "config";
+import { Omit } from "lodash";
+import { LeanDocument } from "mongoose";
+import Session from "../model/sessionModel";
+import { ISessionDocument } from "../interface/sessionDocument";
 import { IUserDocument } from "../interface/userDocument";
-import { omit } from "lodash";
+import {sign, decode} from "../utils/jwtUtils"
 
-export async function createUser(input: DocumentDefinition<IUserDocument>) {
-  try {
-    return await User.create(input);
-  } catch (error: any) {
-    throw new Error(error);
-  };
+export async function createSession(userId: string, userAgent: string) {
+  const session = await Session.create({
+    userId,
+    userAgent
+  });
+
+  return session.toJSON();
 }
 
-function findUser() {}
+export function createAccessToken({
+  user,
+  session
+}: {
+  user: 
+    | Omit<IUserDocument, "password">
+    | LeanDocument<Omit<IUserDocument, "password">>;
+  session: 
+    | Omit<ISessionDocument, "password">
+    | LeanDocument<Omit<ISessionDocument, "password">>;
 
-export async function validatePassword({
-  email,
-  password
-} :{
-  email: IUserDocument['email'];
-  password: string;
 }) {
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    return false;
-  }
-
-  return omit(user.toJSON(), " password");
+  const accessToken = sign (
+    {...user, session: session._id},
+    {expiresIn: config.get("accessTokenTtl")}
+  )
 }
