@@ -1,5 +1,5 @@
 import {Express, Request, Response} from 'express';
-import { createUserController } from './controller/userController';
+import { createUserController, createUserSessionSchema } from './controller/userController';
 import validateRequest from './middleware/validateRequest';
 import { createUserSchema } from './schema/user.schema';
 
@@ -15,7 +15,11 @@ export default function (app: Express) {
   app.post("/api/users", validateRequest(createUserSchema), createUserController);
 
   // Login user
-  // POST /api/session
+  app.post(
+    "/api/session",
+    validateRequest(createUserSessionSchema),
+    createUserSessionHandler
+  )
 
   //Get the user's sessions
   // GET /api/session
