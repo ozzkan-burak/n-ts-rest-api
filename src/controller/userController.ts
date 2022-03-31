@@ -13,3 +13,12 @@ export async function createUserController(req: Request, res: Response) {
         res.status(409).send(err.message)
     }
 }
+
+export async function createUserSessionHandler(req: Request, res: Response) {
+    try {
+        return res.sendStatus(200);
+    } catch (err: any) {
+        log.error(err);
+        res.status(409).send(err.message)
+    }
+}
